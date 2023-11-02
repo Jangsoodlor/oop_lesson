@@ -92,5 +92,9 @@ print(f"Max temp: {my_table3.aggregate(lambda x: max(x), 'temperature')}")
 
 print()
 
-print(f"Min latitude of every city: {my_table1.aggregate(lambda x: min(x), 'latitude')}")
-print(f"Max latitude of evert city: {my_table1.aggregate(lambda x: max(x), 'latitude')}")
+for i in my_table1.select(['country']):
+    for country in i.values():
+        print(country)
+        temp = Table('temp', my_table1.filter(lambda x: x['country'] == country).select(['latitude']))
+        print(f"min latitude: {temp.aggregate(lambda x: min(x), 'latitude')}")
+        print(f"max latitude: {temp.aggregate(lambda x: max(x), 'latitude')}")

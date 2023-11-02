@@ -77,21 +77,20 @@ my_DB = DB()
 my_DB.insert(table1)
 my_DB.insert(table2)
 my_table1 = my_DB.search('cities')
-my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
-my_table1_selected = my_table1.select(['city', 'latitude'])
-print(my_table1)
-print()
-print(my_table1_selected)
-
-temps = []
-for item in my_table1_filtered.table:
-    temps.append(float(item['temperature']))
-print(sum(temps)/len(temps))
-print("Using aggregation")
-print(my_table1_filtered.aggregate(lambda x: sum(x)/len(x), 'temperature'))
-
-print()
 my_table2 = my_DB.search('countries')
-my_table3 = my_table1.join(my_table2, 'country')
-my_table3_filtered = my_table3.filter(lambda x: x['EU'] == 'no').filter(lambda x: float(x['temperature']) < 5.0)
-print(my_table3_filtered.table)
+
+landlock_countries = Table('landlocked EU countries',
+                            my_table2.filter(lambda x: x['coastline']
+                            == 'no' and x['EU'] == 'yes').select(['country']))
+
+my_table3 = Table('landlock_temp', 
+                  my_table1.join(landlock_countries, 'country').select(['temperature']))
+
+print('Temperatures for EU countries without coastline')
+print(f"Min temp: {my_table3.aggregate(lambda x: min(x), 'temperature')}")
+print(f"Max temp: {my_table3.aggregate(lambda x: max(x), 'temperature')}")
+
+print()
+
+print(f"Min latitude of every city: {my_table1.aggregate(lambda x: min(x), 'latitude')}")
+print(f"Max latitude of evert city: {my_table1.aggregate(lambda x: max(x), 'latitude')}")

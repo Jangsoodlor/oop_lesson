@@ -98,3 +98,4 @@ for i in my_table1.select(['country']):
         temp = Table('temp', my_table1.filter(lambda x: x['country'] == country).select(['latitude']))
         print(f"min latitude: {temp.aggregate(lambda x: min(x), 'latitude')}")
         print(f"max latitude: {temp.aggregate(lambda x: max(x), 'latitude')}")
+        print()
